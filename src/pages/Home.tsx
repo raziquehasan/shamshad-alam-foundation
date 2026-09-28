@@ -2,6 +2,13 @@ export const Home = () => {
   return (
     <div className="container py-12">
       <div className="text-center">
+        <div className="mb-8">
+          <img
+            src="/images/foundation-logo.png"
+            alt="Shamshad Alam Foundation"
+            className="h-24 w-auto mx-auto"
+          />
+        </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Welcome to Shamshad Alam Foundation
         </h1>

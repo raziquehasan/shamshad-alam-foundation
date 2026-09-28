@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const currentYear = new Date().getFullYear();
 
@@ -28,9 +28,13 @@ export const PublicLayout = () => {
         <div className="container">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <Heart className="w-8 h-8 text-primary-600" />
-              <span className="text-xl font-bold text-gray-900">
+            <Link to="/" className="flex items-center space-x-3">
+              <img
+                src="/images/foundation-logo.png"
+                alt="Shamshad Alam Foundation"
+                className="h-12 w-auto md:h-14"
+              />
+              <span className="text-xl font-bold text-gray-900 hidden sm:block">
                 Shamshad Alam Foundation
               </span>
             </Link>
@@ -99,7 +103,14 @@ export const PublicLayout = () => {
         <div className="container py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">Shamshad Alam Foundation</h3>
+              <div className="flex items-center space-x-3 mb-4">
+                <img
+                  src="/images/foundation-logo.png"
+                  alt="Shamshad Alam Foundation"
+                  className="h-12 w-auto"
+                />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Shamshad Alam Foundation</h3>
               <p className="text-gray-300 text-sm">
                 Serving the community since 1980 in memory of Shamshad Alam (1950-2020)
               </p>
