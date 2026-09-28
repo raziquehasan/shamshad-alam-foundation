@@ -1,17 +1,27 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Menu, X, LogOut, Heart, Users, DollarSign, FileText, BarChart3, Image } from 'lucide-react';
+import { Menu, X, LogOut, Heart, Users, DollarSign, FileText, BarChart3, Image, User, Camera } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/admin/login');
+  };
 
   const sidebarItems = [
     { path: '/admin', label: 'Dashboard', icon: BarChart3 },
     { path: '/admin/members', label: 'Members', icon: Users },
     { path: '/admin/donations', label: 'Donations', icon: DollarSign },
     { path: '/admin/expenses', label: 'Expenses', icon: FileText },
+    { path: '/admin/beneficiaries', label: 'Beneficiaries', icon: Heart },
     { path: '/admin/activities', label: 'Activities', icon: Image },
+    { path: '/admin/gallery', label: 'Gallery', icon: Camera },
     { path: '/admin/reports', label: 'Reports', icon: BarChart3 },
   ];
 
@@ -66,7 +76,10 @@ export const AdminLayout = () => {
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
-          <button className="flex items-center space-x-3 px-4 py-3 w-full text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center space-x-3 px-4 py-3 w-full text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors"
+          >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
@@ -86,7 +99,17 @@ export const AdminLayout = () => {
             </button>
             <div className="flex-1 md:flex md:items-center md:justify-end">
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Admin User</span>
+                <div className="flex items-center space-x-2">
+                  <User className="w-5 h-5 text-gray-600" />
+                  <span className="text-sm text-gray-600">{user?.email || 'Admin'}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden md:inline">Logout</span>
+                </button>
               </div>
             </div>
           </div>

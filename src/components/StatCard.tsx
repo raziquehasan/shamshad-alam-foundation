@@ -8,10 +8,18 @@ interface StatCardProps {
     value: number;
     isPositive: boolean;
   };
+  color?: 'blue' | 'green' | 'red' | 'yellow';
   className?: string;
 }
 
-export const StatCard = ({ title, value, icon, trend, className = '' }: StatCardProps) => {
+const colorClasses = {
+  blue: 'text-blue-600',
+  green: 'text-green-600',
+  red: 'text-red-600',
+  yellow: 'text-yellow-600',
+};
+
+export const StatCard = ({ title, value, icon, trend, color = 'blue', className = '' }: StatCardProps) => {
   return (
     <div className={`bg-white rounded-lg shadow-md border border-gray-200 p-6 ${className}`}>
       <div className="flex items-center justify-between">
@@ -25,7 +33,7 @@ export const StatCard = ({ title, value, icon, trend, className = '' }: StatCard
             </p>
           )}
         </div>
-        {icon && <div className="text-primary-600">{icon}</div>}
+        {icon && <div className={colorClasses[color]}>{icon}</div>}
       </div>
     </div>
   );

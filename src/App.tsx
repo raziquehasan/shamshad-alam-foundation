@@ -22,7 +22,9 @@ import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminMembers } from './pages/admin/AdminMembers';
 import { AdminDonations } from './pages/admin/AdminDonations';
 import { AdminExpenses } from './pages/admin/AdminExpenses';
+import { AdminBeneficiaries } from './pages/admin/AdminBeneficiaries';
 import { AdminActivities } from './pages/admin/AdminActivities';
+import { AdminGallery } from './pages/admin/AdminGallery';
 import { AdminReports } from './pages/admin/AdminReports';
 
 function App() {
@@ -55,7 +57,9 @@ function App() {
             <Route path="members" element={<AdminMembers />} />
             <Route path="donations" element={<AdminDonations />} />
             <Route path="expenses" element={<AdminExpenses />} />
+            <Route path="beneficiaries" element={<AdminBeneficiaries />} />
             <Route path="activities" element={<AdminActivities />} />
+            <Route path="gallery" element={<AdminGallery />} />
             <Route path="reports" element={<AdminReports />} />
           </Route>
         </Routes>
