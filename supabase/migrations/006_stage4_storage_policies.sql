@@ -47,8 +47,12 @@ ON CONFLICT (id) DO NOTHING;
 -- STORAGE POLICIES FOR ACTIVITY-COVERS
 -- ============================================
 
+-- Drop policies if they exist (for idempotency)
+DROP POLICY IF EXISTS "Public can read activity-covers" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can manage activity-covers" ON storage.objects;
+
 -- Public can read activity-covers (linked to published activities)
-CREATE POLICY IF NOT EXISTS "Public can read activity-covers"
+CREATE POLICY "Public can read activity-covers"
   ON storage.objects FOR SELECT
   USING (
     bucket_id = 'activity-covers' AND
@@ -60,7 +64,7 @@ CREATE POLICY IF NOT EXISTS "Public can read activity-covers"
   );
 
 -- Admins can manage activity-covers
-CREATE POLICY IF NOT EXISTS "Admins can manage activity-covers"
+CREATE POLICY "Admins can manage activity-covers"
   ON storage.objects FOR ALL
   USING (
     bucket_id = 'activity-covers' AND
@@ -75,13 +79,17 @@ CREATE POLICY IF NOT EXISTS "Admins can manage activity-covers"
 -- STORAGE POLICIES FOR GALLERY
 -- ============================================
 
+-- Drop policies if they exist (for idempotency)
+DROP POLICY IF EXISTS "Public can read gallery" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can manage gallery" ON storage.objects;
+
 -- Public can read gallery images
-CREATE POLICY IF NOT EXISTS "Public can read gallery"
+CREATE POLICY "Public can read gallery"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'gallery');
 
 -- Admins can manage gallery
-CREATE POLICY IF NOT EXISTS "Admins can manage gallery"
+CREATE POLICY "Admins can manage gallery"
   ON storage.objects FOR ALL
   USING (
     bucket_id = 'gallery' AND
@@ -100,7 +108,10 @@ CREATE POLICY IF NOT EXISTS "Admins can manage gallery"
 -- This provides idempotency and ensures the final state is correct
 
 -- Member-photos policies
-CREATE POLICY IF NOT EXISTS "Public can read member-photos"
+DROP POLICY IF EXISTS "Public can read member-photos" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can manage member-photos" ON storage.objects;
+
+CREATE POLICY "Public can read member-photos"
   ON storage.objects FOR SELECT
   USING (
     bucket_id = 'member-photos' AND
@@ -111,7 +122,7 @@ CREATE POLICY IF NOT EXISTS "Public can read member-photos"
     )
   );
 
-CREATE POLICY IF NOT EXISTS "Admins can manage member-photos"
+CREATE POLICY "Admins can manage member-photos"
   ON storage.objects FOR ALL
   USING (
     bucket_id = 'member-photos' AND
@@ -123,21 +134,25 @@ CREATE POLICY IF NOT EXISTS "Admins can manage member-photos"
   );
 
 -- Receipts policies (PRIVATE - admin only)
-CREATE POLICY IF NOT EXISTS "Admins can read receipts"
+DROP POLICY IF EXISTS "Admins can read receipts" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can upload receipts" ON storage.objects;
+DROP POLICY IF EXISTS "Admins can delete receipts" ON storage.objects;
+
+CREATE POLICY "Admins can read receipts"
   ON storage.objects FOR SELECT
   USING (
     bucket_id = 'receipts' AND
     is_admin()
   );
 
-CREATE POLICY IF NOT EXISTS "Admins can upload receipts"
+CREATE POLICY "Admins can upload receipts"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'receipts' AND
     is_admin()
   );
 
-CREATE POLICY IF NOT EXISTS "Admins can delete receipts"
+CREATE POLICY "Admins can delete receipts"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'receipts' AND
