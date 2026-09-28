@@ -144,6 +144,15 @@
 - ✅ Enhanced RLS policies for editors (activities, gallery access)
 - ✅ Improved default values (status, published)
 
+**Migration 005: Fix Yearly Financial Report Bug (`supabase/migrations/005_fix_yearly_financial_report.sql`)**
+- ✅ Fixed critical many-to-many multiplication bug in `get_yearly_financial_report()`
+- ✅ Pre-aggregate donations by month before joining
+- ✅ Pre-aggregate expenses by month before joining
+- ✅ Pre-aggregate expense categories by month before joining
+- ✅ Added year parameter validation (1980-2100)
+- ✅ Audited all other RPC functions - all found safe
+- ✅ Security maintained (admin-only check preserved)
+
 ---
 
 ### 4. RPC Functions Created
@@ -325,7 +334,52 @@ dist/assets/index-262.11 kB │ gzip: 83.59 kB
 
 ---
 
-### 12. Supabase SQL Migrations to Execute Manually
+### 12. Critical Bug Fix: Yearly Financial Report Aggregation
+
+**Bug Found:** ✅ IDENTIFIED AND FIXED
+
+**Bug Description:**
+The `get_yearly_financial_report()` function had a critical many-to-many multiplication bug. The implementation LEFT JOINed donations and expenses directly to the monthly calendar, then SUMmed both tables in the same query.
+
+**Impact:**
+- 3 donation rows × 4 expense rows = 12 joined rows
+- This caused inflated donation and expense totals
+- Financial reports would show incorrect amounts
+- Balance calculations would be wrong
+
+**Example:**
+```
+Actual donations: ₹10,000
+Actual expenses: ₹5,000
+Buggy report: Could show ₹40,000 donations, ₹20,000 expenses
+```
+
+**Fix Applied:**
+- Pre-aggregate donations by month FIRST
+- Pre-aggregate expenses by month FIRST  
+- Pre-aggregate expense categories by month FIRST
+- Then join the already-aggregated results to the 12-month calendar
+- Added year parameter validation (1980-2100)
+
+**Migration:** `005_fix_yearly_financial_report.sql`
+
+**Security Status:** ✅ MAINTAINED
+- Function remains admin-only with `is_admin()` check
+- SECURITY DEFINER preserved
+- Proper parameter validation added
+
+**Other RPC Functions Audit:** ✅ ALL SAFE
+- `get_monthly_financial_summary()`: Uses CROSS JOIN with pre-aggregated subqueries - safe
+- `get_expense_category_summary()`: Single table query - safe
+- `get_monthly_donation_trend()`: Single table join - safe
+- `get_monthly_expense_trend()`: Single table join - safe
+- `get_member_contribution_status()`: Proper aggregation - safe
+
+**Conclusion:** Only `get_yearly_financial_report()` had the bug. All other RPC functions are safe.
+
+---
+
+### 13. Supabase SQL Migrations to Execute Manually
 
 **Migration Execution Order:**
 
@@ -343,11 +397,19 @@ dist/assets/index-262.11 kB │ gzip: 83.59 kB
    # Or manually execute: supabase/migrations/004_backend_constraints.sql
    ```
 
+3. **Run Migration 005 (CRITICAL):**
+   ```bash
+   # In Supabase Dashboard or via Supabase CLI
+   supabase migration up
+   # Or manually execute: supabase/migrations/005_fix_yearly_financial_report.sql
+   ```
+
 **Important Notes:**
 - Migration 003 creates all RPC functions and grants permissions
 - Migration 004 adds enum types, constraints, and enhanced policies
-- Both migrations are designed to be non-destructive
-- Run migrations in sequence (003 before 004)
+- Migration 005 fixes critical aggregation bug in yearly financial report
+- All migrations are designed to be non-destructive
+- Run migrations in sequence (003 → 004 → 005)
 - Test migrations in a development environment first
 - Backup database before running migrations in production
 
