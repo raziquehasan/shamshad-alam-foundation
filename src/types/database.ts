@@ -75,7 +75,7 @@ export interface Database {
           donation_date: string
           month: number
           year: number
-          payment_method: string
+          payment_method: PaymentMethod
           reference: string | null
           notes: string | null
           created_at: string
@@ -88,7 +88,7 @@ export interface Database {
           donation_date: string
           month: number
           year: number
-          payment_method: string
+          payment_method: PaymentMethod
           reference?: string | null
           notes?: string | null
           created_at?: string
@@ -101,7 +101,7 @@ export interface Database {
           donation_date?: string
           month?: number
           year?: number
-          payment_method?: string
+          payment_method?: PaymentMethod
           reference?: string | null
           notes?: string | null
           created_at?: string
@@ -111,7 +111,7 @@ export interface Database {
       expenses: {
         Row: {
           id: string
-          category: string
+          category: ExpenseCategory
           amount: number
           expense_date: string
           month: number
@@ -123,7 +123,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          category: string
+          category: ExpenseCategory
           amount: number
           expense_date: string
           month: number
@@ -135,7 +135,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          category?: string
+          category?: ExpenseCategory
           amount?: number
           expense_date?: string
           month?: number
@@ -151,7 +151,7 @@ export interface Database {
           id: string
           title: string
           description: string
-          category: string
+          category: ActivityCategory
           activity_date: string
           cover_image_url: string | null
           published: boolean
@@ -162,7 +162,7 @@ export interface Database {
           id?: string
           title: string
           description: string
-          category: string
+          category: ActivityCategory
           activity_date: string
           cover_image_url?: string | null
           published?: boolean
@@ -173,7 +173,7 @@ export interface Database {
           id?: string
           title?: string
           description?: string
-          category?: string
+          category?: ActivityCategory
           activity_date?: string
           cover_image_url?: string | null
           published?: boolean
@@ -207,7 +207,7 @@ export interface Database {
       beneficiaries: {
         Row: {
           id: string
-          category: string
+          category: BeneficiaryCategory
           support_type: string
           amount: number
           support_date: string
@@ -217,7 +217,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          category: string
+          category: BeneficiaryCategory
           support_type: string
           amount: number
           support_date: string
@@ -227,7 +227,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          category?: string
+          category?: BeneficiaryCategory
           support_type?: string
           amount?: number
           support_date?: string
@@ -247,4 +247,83 @@ export interface Database {
       [_ in never]: never
     }
   }
+}
+
+// ============================================
+// RPC Function Return Types
+// ============================================
+
+export interface MonthlyFinancialSummary {
+  total_donations: number;
+  total_expenses: number;
+  balance: number;
+}
+
+export interface ExpenseCategorySummary {
+  education: number;
+  medical: number;
+  other: number;
+}
+
+export interface MonthlyDonationTrend {
+  month: number;
+  month_name: string;
+  total_donations: number;
+}
+
+export interface MonthlyExpenseTrend {
+  month: number;
+  month_name: string;
+  total_expenses: number;
+}
+
+export interface MemberContributionStatus {
+  member_id: string;
+  member_name: string;
+  status: 'paid' | 'pending';
+}
+
+export interface YearlyFinancialReport {
+  month: number;
+  month_name: string;
+  donations: number;
+  expenses: number;
+  balance: number;
+  education_expenses: number;
+  medical_expenses: number;
+  other_expenses: number;
+}
+
+// ============================================
+// Service Response Types
+// ============================================
+
+export interface ServiceResponse<T> {
+  data: T | null;
+  error: string | null;
+  loading: boolean;
+}
+
+// ============================================
+// Enum Types
+// ============================================
+
+export type ExpenseCategory = 'education' | 'medical' | 'other';
+export type BeneficiaryCategory = 'education' | 'medical' | 'financial' | 'other';
+export type PaymentMethod = 'cash' | 'bank_transfer' | 'upi' | 'cheque' | 'other';
+export type ActivityCategory = 'education' | 'health' | 'community' | 'religious' | 'other';
+export type MemberStatus = 'active' | 'inactive';
+export type UserRole = 'admin' | 'editor';
+
+// ============================================
+// Public-Safe Types
+// ============================================
+
+export interface PublicMember {
+  id: string;
+  full_name: string;
+  role: string;
+  photo_url: string | null;
+  joining_date: string;
+  status: MemberStatus | null;
 }
